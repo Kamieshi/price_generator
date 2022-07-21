@@ -49,7 +49,7 @@ func (c *Company) Insert(ctx context.Context, comp *models.Company) error {
 }
 
 func (c *Company) Get(ctx context.Context, id uuid.UUID) (*models.Company, error) {
-	querySQL := "SELECT  id,name, max_ask, min_ask,max_ask_different,max_bid,min_bid,max_bid_different FROM Company WHERE id=$1;"
+	querySQL := "SELECT  id,name, max_ask, min_ask,max_ask_different,max_bid,min_bid,max_bid_different ,max_ask_bid_diff FROM Company WHERE id=$1;"
 	var comp models.Company
 	err := c.pull.QueryRow(ctx, querySQL, id).Scan(
 		&comp.ID,
@@ -60,6 +60,7 @@ func (c *Company) Get(ctx context.Context, id uuid.UUID) (*models.Company, error
 		&comp.MaxBid,
 		&comp.MinBid,
 		&comp.MaxBidDifferent,
+		&comp.MaxAskBidDiff,
 	)
 	if err != nil {
 		return nil, fmt.Errorf("repository Company/Get:%v", err)
@@ -67,7 +68,7 @@ func (c *Company) Get(ctx context.Context, id uuid.UUID) (*models.Company, error
 	return &comp, nil
 }
 func (c *Company) GetAll(ctx context.Context) ([]*models.Company, error) {
-	querySQL := "SELECT  id,name, max_ask, min_ask,max_ask_different,max_bid,min_bid,max_bid_different FROM Company"
+	querySQL := "SELECT  id,name, max_ask, min_ask,max_ask_different,max_bid,min_bid,max_bid_different,max_ask_bid_diff FROM Company"
 	rows, err := c.pull.Query(ctx, querySQL)
 	if err != nil {
 		return nil, fmt.Errorf("repository Company/GetAll:%v", err)
@@ -86,6 +87,7 @@ func (c *Company) GetAll(ctx context.Context) ([]*models.Company, error) {
 			&comp.MaxBid,
 			&comp.MinBid,
 			&comp.MaxBidDifferent,
+			&comp.MaxAskBidDiff,
 		)
 		if err != nil {
 			logrus.WithError(err).Error()

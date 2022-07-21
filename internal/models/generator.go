@@ -40,17 +40,8 @@ func NewGenerator(comp *Company, initCourse *Course) *GeneratorPrice {
 }
 
 func (g *GeneratorPrice) GenerateCourse() *Course {
-	newBidDiff := rand.Int63n(int64(g.Comp.MaxBidDifferent))
-	if g.LastCourse.Bid+newBidDiff >= int64(g.Comp.MaxBid) {
-		g.LastCourse.Bid -= newBidDiff
-	} else {
-		g.LastCourse.Bid += newBidDiff
-	}
-	newAskDiff := rand.Int63n(int64(g.Comp.MaxAskDifferent))
-	if g.LastCourse.Ask+newAskDiff >= int64(g.Comp.MaxAsk) {
-		g.LastCourse.Ask -= newAskDiff
-	} else {
-		g.LastCourse.Ask += newAskDiff
+	if g.LastCourse.Bid+int64(g.Comp.MaxBidDifferent) >= g.LastCourse.Ask {
+
 	}
 	return g.LastCourse
 }
