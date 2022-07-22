@@ -30,8 +30,8 @@ func NewGenerator(comp *models.Company) *Generator {
 
 // GenerateCourse Generate new course
 func (g *Generator) GenerateCourse() {
-	diff := rand.Int63n(100)
-	if rand.Intn(10)%2 == 0 {
+	diff := rand.Int63n(10)
+	if rand.Intn(10)%2 == 0 && g.LastCourse.Bid-diff >= 0 {
 		diff *= -1
 	}
 	g.LastCourse.Ask += diff

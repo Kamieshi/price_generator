@@ -53,7 +53,8 @@ func main() {
 			log.Info(strCmd.Val())
 			g.GenerateCourse()
 		}
+		log.Info(generators[0].LastCourse.Ask, " > ", generators[0].LastCourse.Bid)
 		log.Info("UPDATE COMPLETE")
-		time.Sleep(5 * time.Second)
+		time.Sleep(1 * time.Second)
 	}
 }
