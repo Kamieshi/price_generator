@@ -5,8 +5,8 @@ import "github.com/google/uuid"
 
 // Company some company
 type Company struct {
-	ID   uuid.UUID `json:"id,omitempty"`
-	Name string    `json:"name,omitempty"`
+	ID   uuid.UUID `json:"ID,omitempty"`
+	Name string    `json:"Name,omitempty"`
 }
 
 // NewCompany Constructor

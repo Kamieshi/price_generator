@@ -1,13 +1,9 @@
 package models
 
-import (
-	"time"
-)
-
 // Course object current course
 type Course struct {
-	Comp *Company  `json:"comp,omitempty"`
-	Bid  int64     `json:"bid,omitempty"`
-	Ask  int64     `json:"ask,omitempty"`
-	Time time.Time `json:"time"`
+	Comp *Company `json:"Company,omitempty"`
+	Bid  int64    `json:"Bid,omitempty"`
+	Ask  int64    `json:"Ask,omitempty"`
+	Time string   `json:"Time"`
 }

@@ -33,6 +33,7 @@ func main() {
 
 	for {
 		for _, g := range generators {
+			g.GenerateCourse()
 			data, err := json.Marshal(g.LastCourse)
 			if err != nil {
 				log.WithError(err).Error()
@@ -51,10 +52,10 @@ func main() {
 				log.WithError(err)
 			}
 			log.Info(strCmd.Val())
-			g.GenerateCourse()
+
 		}
 		log.Info(generators[0].LastCourse.Ask, " > ", generators[0].LastCourse.Bid)
 		log.Info("UPDATE COMPLETE")
-		time.Sleep(1 * time.Second)
+		time.Sleep(100 * time.Millisecond)
 	}
 }

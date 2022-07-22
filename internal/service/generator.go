@@ -21,7 +21,7 @@ func NewGenerator(comp *models.Company) *Generator {
 		Comp: comp,
 		Bid:  bid,
 		Ask:  ask,
-		Time: time.Now(),
+		Time: time.Now().Format("2006-01-02T15:04:05.000TZ-07:00"),
 	}
 	return &Generator{
 		LastCourse: &initCourse,
@@ -34,6 +34,7 @@ func (g *Generator) GenerateCourse() {
 	if rand.Intn(10)%2 == 0 && g.LastCourse.Bid-diff >= 0 {
 		diff *= -1
 	}
+	g.LastCourse.Time = time.Now().Format("2006-01-02T15:04:05.000TZ-07:00")
 	g.LastCourse.Ask += diff
 	g.LastCourse.Bid += diff
 }
