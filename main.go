@@ -2,71 +2,58 @@ package main
 
 import (
 	"context"
+	"encoding/json"
+	"time"
 
-	"github.com/jackc/pgx/v4/pgxpool"
+	rds "github.com/go-redis/redis/v8"
 	log "github.com/sirupsen/logrus"
 
-	"priceGenerator/internal/conf"
 	"priceGenerator/internal/models"
-	"priceGenerator/internal/repository"
+	"priceGenerator/internal/service"
 )
-
-func initValue(ctx context.Context, repCompany *repository.Company) {
-	companies, err := repCompany.GetAll(ctx)
-	if err != nil {
-		log.WithError(err).Fatal()
-	}
-	if len(companies) == 0 {
-		if err = repCompany.Insert(ctx, models.NewCompany(
-			"Company 1",
-			100000,
-			50000,
-			150,
-			110000,
-			55000,
-			150,
-			500,
-		)); err != nil {
-			log.WithError(err).Fatal()
-		}
-		if err = repCompany.Insert(ctx, models.NewCompany(
-			"Company 2",
-			100000,
-			50000,
-			150,
-			110000,
-			55000,
-			150,
-			500,
-		)); err != nil {
-			log.WithError(err).Fatal()
-		}
-	}
-}
 
 func main() {
 	ctx := context.Background()
-	config, err := conf.NewConfiguration()
-	if err != nil {
-		log.WithError(err).Fatal()
+	companies := []*models.Company{
+		models.NewCompany("Company 1"),
+		models.NewCompany("Company 2"),
+		models.NewCompany("Company 3"),
+		models.NewCompany("Company 4"),
+		models.NewCompany("Company 5"),
 	}
-	pool, err := pgxpool.Connect(ctx, config.PostgresConnString)
-	if err != nil {
-		log.WithError(err).Fatal()
+	generators := make([]*service.Generator, 0, len(companies))
+	for _, c := range companies {
+		generators = append(generators, service.NewGenerator(c))
 	}
-	repCompany := repository.NewRepositoryCompany(pool)
-	initValue(ctx, repCompany)
+	client := rds.NewClient(&rds.Options{
+		Addr:     "localhost:6379",
+		Password: "", // no password set
+		DB:       0,  // use default DB
+	})
 
-	companies, err := repCompany.GetAll(ctx)
-	if err != nil {
-		log.WithError(err).Fatal()
-	}
-	genereator1 := models.NewGenerator(companies[0], models.NewCourse(companies[0]))
-	for i := 0; ; i++ {
-		genereator1.GenerateCourse()
-		if genereator1.LastCourse.Bid >= genereator1.LastCourse.Ask {
-			log.Error(genereator1.LastCourse, i)
-			break
+	for {
+		for _, g := range generators {
+			data, err := json.Marshal(g.LastCourse)
+			if err != nil {
+				log.WithError(err).Error()
+				continue
+			}
+			arg := rds.XAddArgs{
+				Stream: "prices",
+				MaxLen: 0,
+				ID:     "",
+				Values: map[string]string{
+					"price": string(data),
+				},
+			}
+			strCmd := client.XAdd(ctx, &arg)
+			if strCmd.Err() != nil {
+				log.WithError(err)
+			}
+			log.Info(strCmd.Val())
+			g.GenerateCourse()
 		}
+		log.Info("UPDATE COMPLETE")
+		time.Sleep(5 * time.Second)
 	}
 }
