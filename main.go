@@ -16,10 +16,6 @@ func main() {
 	ctx := context.Background()
 	companies := []*models.Company{
 		models.NewCompany("Company 1"),
-		models.NewCompany("Company 2"),
-		models.NewCompany("Company 3"),
-		models.NewCompany("Company 4"),
-		models.NewCompany("Company 5"),
 	}
 	generators := make([]*service.Generator, 0, len(companies))
 	for _, c := range companies {
@@ -33,7 +29,8 @@ func main() {
 
 	for {
 		for _, g := range generators {
-			g.GenerateCourse()
+			t_N := time.Now()
+			g.GenerateAddCourse()
 			data, err := json.Marshal(g.LastCourse)
 			if err != nil {
 				log.WithError(err).Error()
@@ -51,11 +48,10 @@ func main() {
 			if strCmd.Err() != nil {
 				log.WithError(err)
 			}
-			log.Info(strCmd.Val())
-
+			log.Info(strCmd.Val(), "  ", time.Since(t_N))
 		}
 		log.Info(generators[0].LastCourse.Ask, " > ", generators[0].LastCourse.Bid)
 		log.Info("UPDATE COMPLETE")
-		time.Sleep(100 * time.Millisecond)
+		time.Sleep(500 * time.Millisecond)
 	}
 }

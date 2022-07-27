@@ -38,3 +38,9 @@ func (g *Generator) GenerateCourse() {
 	g.LastCourse.Ask += diff
 	g.LastCourse.Bid += diff
 }
+func (g *Generator) GenerateAddCourse() {
+	diff := rand.Int63n(10)
+	g.LastCourse.Time = time.Now().Format("2006-01-02T15:04:05.000TZ-07:00")
+	g.LastCourse.Ask += diff
+	g.LastCourse.Bid += diff
+}
