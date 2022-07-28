@@ -1,4 +1,5 @@
-module priceGenerator
+module github.com/Kamieshi/price_generator
+
 
 go 1.18
 

@@ -5,7 +5,7 @@ import (
 	"math/rand"
 	"time"
 
-	"priceGenerator/internal/models"
+	"github.com/Kamieshi/price_generator/internal/models"
 )
 
 // Generator Work with courses

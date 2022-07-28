@@ -5,11 +5,10 @@ import (
 	"encoding/json"
 	"time"
 
+	"github.com/Kamieshi/price_generator/internal/models"
+	"github.com/Kamieshi/price_generator/internal/service"
 	rds "github.com/go-redis/redis/v8"
 	log "github.com/sirupsen/logrus"
-
-	"priceGenerator/internal/models"
-	"priceGenerator/internal/service"
 )
 
 func main() {
