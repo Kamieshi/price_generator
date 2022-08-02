@@ -3,25 +3,30 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"time"
 
-	"github.com/Kamieshi/price_generator/internal/models"
+	"github.com/Kamieshi/price_generator/internal/config"
 	"github.com/Kamieshi/price_generator/internal/service"
 	rds "github.com/go-redis/redis/v8"
+	"github.com/sirupsen/logrus"
 	log "github.com/sirupsen/logrus"
 )
 
 func main() {
-	ctx := context.Background()
-	companies := []*models.Company{
-		models.NewCompany("Company 1"),
+	conf, err := config.GetConfig()
+	if err != nil {
+		logrus.WithError(err).Fatal("Parse config from OS ENV")
+		return
 	}
+	ctx := context.Background()
+	companies := service.GetCountCompany(conf.CountCompany)
 	generators := make([]*service.Generator, 0, len(companies))
 	for _, c := range companies {
 		generators = append(generators, service.NewGenerator(c))
 	}
 	client := rds.NewClient(&rds.Options{
-		Addr:     "localhost:6379",
+		Addr:     fmt.Sprintf("%s:%s", conf.RedisHost, conf.RedisPort),
 		Password: "", // no password set
 		DB:       0,  // use default DB
 	})
@@ -51,6 +56,6 @@ func main() {
 		}
 		log.Info(generators[0].LastCourse.Ask, " > ", generators[0].LastCourse.Bid)
 		log.Info("UPDATE COMPLETE")
-		time.Sleep(500 * time.Millisecond)
+		time.Sleep(time.Duration(1000/conf.CountUpdatePerSecond) * time.Millisecond)
 	}
 }

@@ -5,19 +5,19 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/Kamieshi/price_generator/internal/models"
+	"github.com/Kamieshi/price_generator/internal/model"
 )
 
 // Generator Work with courses
 type Generator struct {
-	LastCourse *models.Course
+	LastCourse *model.Course
 }
 
 // NewGenerator Constructor
-func NewGenerator(comp *models.Company) *Generator {
+func NewGenerator(comp *model.Company) *Generator {
 	ask := rand.Int63n(1000)
 	bid := ask - rand.Int63n(100)
-	initCourse := models.Course{
+	initCourse := model.Course{
 		Comp: comp,
 		Bid:  bid,
 		Ask:  ask,

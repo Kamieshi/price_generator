@@ -5,3 +5,16 @@ services:
     image: redis
     ports:
       - "6379:6379"
+
+  app:
+    build:
+      context: .
+      dockerfile: dockerfile
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      COUNT_COMPANY: 5
+      COUNT_UPDATE_PER_SECOND: 1
+      ONLY_POSITIVE_INCREMENT: "true"
+    depends_on:
+      - redis

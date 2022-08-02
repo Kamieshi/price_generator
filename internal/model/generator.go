@@ -1,4 +1,4 @@
-package models
+package model
 
 // Course object current course
 type Course struct {
